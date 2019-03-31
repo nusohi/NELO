@@ -1,6 +1,6 @@
 # NELO
 
-## [Take A Break](TakeABreak/README.md)
+## [Take A Break](./TakeABreak/)
 
 > 20-20-20原则即每20分钟向20英尺（6米）外看20秒
 
