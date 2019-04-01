@@ -14,10 +14,16 @@
 python TakeABreak.py
 ```
 
+## To do
+
+- [x] **打包成exe文件**
+- [ ] **页面优化**
+- [ ] **开机自启动** *(win)*
+
 ## 图片来源
 
 - 随机图片调用[必应Api](https://uploadbeta.com/api/pictures/random/?key=BingEverydayWallpaperPicture)
 
-```
+```python
 https://uploadbeta.com/api/pictures/random/?key=BingEverydayWallpaperPicture
 ```
