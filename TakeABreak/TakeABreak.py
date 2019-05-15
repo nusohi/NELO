@@ -1,10 +1,13 @@
 import time
 import webbrowser
 import os
+from Screen import Screen
 
 
 class Break:
     def __init__(self, _interval=20*60, _total=30):
+        # 图片显示
+        self.screen = Screen()
         # 时间间隔 & 提醒次数
         self.interval = _interval   # 20*60 20min 20-20-20原则
         self.total = _total         # 30次 -> 10小时
@@ -24,22 +27,19 @@ class Break:
                 print('创建完成：', self.html_file_path)
 
     def run(self):
-        print('时间间隔:', self.interval, 's  提醒次数:', self.total)
-        print('程序开始...')
-
-        # 浏览器打开本地html需要的地址
-        html_file = 'file:///' + self.html_file_path
+        print('时间间隔:', self.interval, 's  提醒次数:', self.total, '\n程序开始...')
 
         # 计时 & 计数
         flag = 0
         while (flag < self.total):
             time.sleep(self.interval)
             flag += 1
-            webbrowser.open(self.html_file_path, new=0, autoraise=True)
+            # webbrowser.open(self.html_file_path, new=0, autoraise=True)
+            self.screen.Show()
             print('第', str(flag), "次休息")
         print("程序结束")
 
 
 if __name__ == '__main__':
-    TakeABreak = Break(_total=100)
+    TakeABreak = Break(_interval=20*60, _total=100)
     TakeABreak.run()
