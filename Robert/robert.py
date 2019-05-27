@@ -22,19 +22,26 @@ wea = weather.Weather()
 dict = dictionary.Dictionary()
 
 
-@itchat.msg_register(itchat.content.TEXT)
+@itchat.msg_register(itchat.content.TEXT, isGroupChat=True, isFriendChat=True)
 def text_reply(msg):
     printMsg(msg)   # 控制台输出
     friend = itchat.search_friends(userName=msg['FromUserName'])
+    if friend == None:
+        chatroom_name = msg['User']['NickName'].strip('\'')
+        friend=itchat.search_chatrooms(name=chatroom_name)[0]
     msgText = msg.text.strip()
 
     # 加入friend列表
-    if msgText == FriendPass and not friend['RemarkName'] in friendList:
-        AddNewFriend(friend['RemarkName'])
+    if msgText == FriendPass and not (friend['RemarkName'] in friendList or friend['NickName'] in friendList):
+        if friend['RemarkName'] != '':
+            AddNewFriend(friend['RemarkName'])
+        else:
+            AddNewFriend(friend['NickName'])
+        
         print("-----------> new friend " + friend['RemarkName'])
         return "Welcome!"
 
-    if friend['RemarkName'] in friendList:
+    if friend['RemarkName'] in friendList or friend['NickName'] in friendList:
         print("-----------> 来自FriendList")
         # 有'天气'字眼 -> 查天气
         for txt in wea.weatherCode:
@@ -50,8 +57,8 @@ def text_reply(msg):
         cityName = wea.FindCityName(msgText)
         if(cityName):
             return wea.getWeatherByName(cityName)
-
-        return 'server received...'
+        if friend['RemarkName'] == 'nuso' :
+            return 'server received...' 
     else:
         print("-----------> 不在friendList的人")
         print('-----------> friend list :', friendList)
@@ -71,6 +78,8 @@ def AddNewFriend(name):
 
 
 def LoadFriendList():
+    if not os.path.exists(FriendList):
+        open(FriendList, 'w').close()
     with open(FriendList, 'r', encoding="UTF-8") as FriendListFile:
         list = FriendListFile.read().split('\n')
         list.remove('')
@@ -80,9 +89,20 @@ def LoadFriendList():
 
 def printMsg(msg):
     friend = itchat.search_friends(userName=msg['FromUserName'])
+    if friend == None:
+        chatroom_name = msg['User']['NickName'].strip('\'')
+        friend=itchat.search_chatrooms(name=chatroom_name)[0]
     print('\n', msg.text)
-    print('----------->', time.strftime('%Y-%m-%d %H:%M:%S', time.localtime()),
-          'from:', friend['NickName'], '(remark:', friend['RemarkName'], ',UserName:', msg['FromUserName'], ')')
+
+    info_text = ''
+    try:
+        info_text += 'from:' + friend['NickName'] 
+        info_text += '\t中的：' + msg['ActualNickName']
+    except:
+        pass
+    print('----------->', time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
+        , info_text
+        , ')')
 
 
 def RemindWords(inc):
@@ -98,9 +118,11 @@ def RemindWords(inc):
     t.start()
 
 
-def RemindExams(inc):
+def RemindExams(inc, check_status=True):
     response = ExamReminder.check()
-    if response['status']=='new':
+    if response['status'] != 'new' and check_status:
+        print('已查询考试信息，没有新的考试消息')
+    else:
         nuso_toUserName = UpdateUserName()
         itchat.send(
             ExamReminder.format_exam(response['examList']),
@@ -108,8 +130,6 @@ def RemindExams(inc):
         )
         print('已发送考试信息----------------------------------------')
         print(ExamReminder.format_exam(response['examList']))
-    else:
-        print('已查询考试信息，没有新的考试消息')
 
     t = Timer(inc, RemindExams, (inc,))
     t.start()
@@ -121,6 +141,8 @@ t1 = threading.Thread(target=RemindWords, args=(5*60,))
 threads.append(t1)
 t2 = threading.Thread(target=RemindExams, args=(10*60,))
 threads.append(t2)
+t3 = threading.Thread(target=RemindExams, args=(6*60*60,False,))
+threads.append(t3)
 
 if __name__ == '__main__':
     itchat.auto_login(hotReload=True, enableCmdQR=False)     # enableCmdQR=True

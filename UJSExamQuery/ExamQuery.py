@@ -63,14 +63,14 @@ class ExamReminder():
         examsList = ParseExamList.get(html)
 
         # new exam info
-        if len(examsList) > last_len_exams:
+        if self.CheckExams(self, examsList):
             return {
-                'status': 'new',
+                'status': 'latest',
                 'examList': examsList
             }
         else:
             return {
-                'status': 'latest',
+                'status': 'new',
                 'examList': examsList
             }
 
@@ -83,8 +83,25 @@ class ExamReminder():
             text += '\n'
         return text
 
+    def CheckExams(self, examList):
+        if len(self.exams) != len(examList):
+            return False
+        for i in range(len(self.exams)):
+            if self.exams[i] != examList[i]:
+                return False
+        return True
+        
+
+
+
     def LoadExams(self):
-        with open(dir_path + '/ExamList.json', 'r', encoding='utf-8') as file:
+        exam_file_path = dir_path + '/ExamList.json'
+        if not os.path.exists(exam_file_path):
+            open(exam_file_path, 'w').close()
+            self.exams=[]
+            return
+        
+        with open(exam_file_path, 'r', encoding='utf-8') as file:
             self.exams_json = json.loads(file.read())
         if self.exams_json['exams'] != None:
             self.exams = self.exams_json['exams']

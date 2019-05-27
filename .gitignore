@@ -5,6 +5,9 @@ build/
 dist/
 
 *.spec
-
+itchat.pkl
 
 try/
+Robert/io/
+!Robert/io/CityCode.json
+!Robert/io/CityName.json
