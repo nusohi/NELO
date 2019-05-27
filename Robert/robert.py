@@ -4,7 +4,7 @@ path = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.append(path)
 
 from UJSExamQuery.ExamQuery import *  # import ExamQuery
-from conf import FriendPass, FriendList, friendList, nuso_toUserName
+from conf import FriendPass, FriendList, friendList, nuso_toUserName, enableCmdQR
 import itchat
 import threading
 from threading import Timer
@@ -145,7 +145,7 @@ t3 = threading.Thread(target=RemindExams, args=(6*60*60,False,))
 threads.append(t3)
 
 if __name__ == '__main__':
-    itchat.auto_login(hotReload=True, enableCmdQR=False)     # enableCmdQR=True
+    itchat.auto_login(hotReload=True, enableCmdQR=enableCmdQR)     # enableCmdQR=True
     LoadFriendList()
     # RemindWords(5 * 60)
 

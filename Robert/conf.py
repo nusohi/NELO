@@ -1,5 +1,7 @@
 
-FilePreffix = 'Robert/'
+is_server = False
+FilePreffix = 'Robert/' if not is_server else ''
+enableCmdQR = False if not is_server else True
 
 #  robert.py
 FriendPass = '魁'
