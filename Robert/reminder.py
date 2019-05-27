@@ -1,5 +1,6 @@
 import datetime
 import re
+import os
 from threading import Timer
 from conf import ToRemindWordListFile, AlphabetFile, OldWordListFile
 
@@ -34,6 +35,9 @@ def remind():
 
 def BuildToRemindFile():
     wordDict = {}
+    if not os.path.exists(AlphabetFile):
+        open(AlphabetFile, 'w').close()
+
     # 从alpha中取
     with open(AlphabetFile, 'r', encoding='utf-8') as alphaFile:
         wordList = alphaFile.read().split('\n')
@@ -46,7 +50,7 @@ def BuildToRemindFile():
         words[1] = words[1].replace('@', '')
         wordDict[words[0]] = words[1]
     # 放到ToRemind中去
-    with open(ToRemindWordListFile, 'a', encoding='utf-8') as toRemindFile:
+    with open(ToRemindWordListFile, 'a+', encoding='utf-8') as toRemindFile:
         for word in wordDict:
             toRemindFile.write(word + ' #' + wordDict[word] + ' #' + '1\n')
 

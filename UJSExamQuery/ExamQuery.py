@@ -16,7 +16,7 @@ class DownloadHtml():
     @classmethod
     def get(self):
         html = requests.get(self.url, cookies=self.cookies)
-        with open(dir_path + '/latest.html', 'w', encoding='utf-8') as file:
+        with open(dir_path + '/io/latest.html', 'w', encoding='utf-8') as file:
             file.write(html.text)
         return html.text
 
@@ -45,7 +45,7 @@ class ParseExamList():
 
         exam_json = {'exams': exams}
 
-        with open(dir_path + '/ExamList.json', 'w', encoding='utf-8') as file:
+        with open(dir_path + '/io/ExamList.json', 'w', encoding='utf-8') as file:
             json_str = json.dumps(exam_json, indent=4, ensure_ascii=False)
             file.write(json_str)
 
@@ -95,7 +95,10 @@ class ExamReminder():
 
 
     def LoadExams(self):
-        exam_file_path = dir_path + '/ExamList.json'
+        # 创建文件夹及文件
+        if not os.path.exists(dir_path + '/io'):
+            os.mkdir(dir_path + '/io')
+        exam_file_path = dir_path + '/io/ExamList.json'
         if not os.path.exists(exam_file_path):
             open(exam_file_path, 'w').close()
             self.exams=[]
