@@ -4,14 +4,18 @@ from bs4 import BeautifulSoup
 import os
 dir_path = os.path.abspath(os.path.dirname(__file__))
 
+cookie = 'TGC=eyJhbGciOiJIUzUxMiJ9.ZXlKNmFYQWlPaUpFUlVZaUxDSmhiR2NpT2lKa2FYSWlMQ0psYm1NaU9pSkJNVEk0UTBKRExVaFRNalUySW4wLi5Ta2xhUmVFRzNWN3RMcFkyck5SVmVnLmtSOEwyYlZ4UWxfZlRDYnBtR2xSZlRLM1FPX2w5Q1lJcWI2OTltT2M0NUVBYXJrWEZmbEx0aWtWbjJxY3oxU2k2VzhWQ0EyWnB6c092WnUwNkRkd1BCX1BaM3dfSFRTSVMxVkFGejJWT0h0bEI0RWRGa21yWEUxWm15RkZHclRiekxOd2paSkpIRTR0MUgtcFQ4UndDSFNMOVo1dkdJZW42TEkxeDVVUVNETkxxcFVBV3JvNTVraG94Wm9PNmZKWU0zLVlyVWwydUY0MkM4RUJYbXlfSzFNMVJCZFg3Y3A5NDZ0WHZ2bnl0bXhaZURjMTc3OUgtLVhkSWFTNUFJQ2UuT0ZCNW55SzdtTEtBLVVFMTRPQUpIdw==.-flM5OCKA4MGUCkmZ__3ib9oap_XPUZwt5bobNX13xXTm1eP3BAw5qmbNLzP6oqQtnLa9Yce9r-eKE37FaqFrw; cloud_sessionID=0cfbb0741a4a189e1f50b70220b6b880; _csrf-cloud=0f3e73b48c3e0377c1b017601c5ce0a787e4c64e09abb23f70a2a83206d86631a%3A2%3A%7Bi%3A0%3Bs%3A11%3A%22_csrf-cloud%22%3Bi%3A1%3Bs%3A32%3A%2260wr4Rbl2JXsgAaPZfY_oFyAt33Je_aM%22%3B%7D'
+
+def parse_cookie(cookie):
+    cookies_dict = {}
+    for item in cookie.strip().split(';'):
+        key, value = item.split('=', 1)
+        cookies_dict[key] = value
+    return cookies_dict
 
 class DownloadHtml():
     url = 'http://yun.ujs.edu.cn/jwgl/exam/mobile'
-    cookies = {
-        "TGC": "eyJhbGciOiJIUzUxMiJ9.ZXlKNmFYQWlPaUpFUlVZaUxDSmhiR2NpT2lKa2FYSWlMQ0psYm1NaU9pSkJNVEk0UTBKRExVaFRNalUySW4wLi5hdHNYTy1pU3VYMEItbmJheWgtN1VBLjBVM1FOaDBaLXpsYmljVGllUXotSzRWb0JjUmR2NlVmZTNjVDUzakwzNUJ0VmZsMl9LbEJ4aDJubmhDaVF6ZWRkR3FySFF4WmZGRVV5NnEtN0JDQVMtckpLQWktWjZvWG5PNWxiN180MWd0X1JKY1BJMWNsZDc1VGxtbzVZd3BJQjlsNmVpMUhJc0NMa3NRVVB6bHp3VV9mSTgwdGVkWlNNYVlGTjFRWW45bDYyZ3J5aWQ1XzBGUXZrQ2c0RDA1NjJwc0VZdkhXOVdzVVVrZmpHc0ltWU9vd0MycnZIWG9aWUNncjVhNjB2YVNpdTFHQmxDeWZnbTZzVTdrbkRuemwuZDdQTUFGMzl2VVptWllZUTV4NDlCdw==.6QzvgYiXM7ua_oEh1KX55eBL-Fbyb8yH5bUPYBfJgW2AbFdK_KPq6vPvVotffoZT9pgDDP7fiHrAXEoqyY0Twg",
-        "cloud_sessionID": "d2b988a5fb171f6756dd8a33815d4dd7",
-        "_csrf-cloud": "5deb661c274fdbf91b1bc6a0256333b24ec593dd74cd07af1925555330fb3d03a%3A2%3A%7Bi%3A0%3Bs%3A11%3A%22_csrf-cloud%22%3Bi%3A1%3Bs%3A32%3A%22qlpjW-kNhs-ar96lEj63GFnNwQdFcx_f%22%3B%7D"
-    }
+    cookies = parse_cookie(cookie)
 
     @classmethod
     def get(self):

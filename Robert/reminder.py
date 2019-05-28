@@ -26,10 +26,13 @@ def remind():
     # 提醒完要存进文件的
     BuildNextWordList(toRemindDict, laterRemindDict)
 
-    print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M"))
-    print('wordList:', len(wordList))
-    print('toRemindDict:', len(toRemindDict))
-    print('laterRemindDict:', len(laterRemindDict))
+    print('------------------------')
+    print('| ' + datetime.datetime.now().strftime("%Y-%m-%d %H:%M"))
+    print('| wordList:', len(wordList))
+    print('| toRemindDict:', len(toRemindDict))
+    print('| laterRemindDict:', len(laterRemindDict))
+    print('------------------------')
+    
     return toRemindDict
 
 
