@@ -123,10 +123,10 @@ def RemindExams(inc, check_status=True):
     if response['status'] != 'new' and check_status:
         print('已查询考试信息，没有新的考试消息')
     else:
-        nuso_toUserName = UpdateUserName()
+        _nuso_toUserName = UpdateUserName()
         itchat.send(
             ExamReminder.format_exam(response['examList']),
-            toUserName=nuso_toUserName
+            toUserName=_nuso_toUserName
         )
         print('已发送考试信息----------------------------------------')
         print(ExamReminder.format_exam(response['examList']))
@@ -134,20 +134,37 @@ def RemindExams(inc, check_status=True):
     t = Timer(inc, RemindExams, (inc,))
     t.start()
 
+def __RemindExams__(inc, check_status=True):
+    while(True):
+        response = ExamReminder.check()
+        if response['status'] != 'new' and check_status:
+            print('已查询考试信息，没有新的考试消息')
+        else:
+            _nuso_toUserName = UpdateUserName()
+            itchat.send(
+                ExamReminder.format_exam(response['examList']),
+                toUserName=_nuso_toUserName
+            )
+            print('已发送考试信息----------------------------------------')
+            print(ExamReminder.format_exam(response['examList']))
+        time.sleep(inc)
 
-# 多线程
-threads = []
-t1 = threading.Thread(target=RemindWords, args=(5*60,))
-threads.append(t1)
-t2 = threading.Thread(target=RemindExams, args=(10*60,))
-threads.append(t2)
-t3 = threading.Thread(target=RemindExams, args=(6*60*60,False,))
-threads.append(t3)
 
 if __name__ == '__main__':
+    # itchat 登陆
     itchat.auto_login(hotReload=True, enableCmdQR=enableCmdQR)     # enableCmdQR=True
+
+    # 加载作用对象列表
     LoadFriendList()
-    # RemindWords(5 * 60)
+
+    # 多线程---（提醒事务）
+    threads = []
+    t1 = threading.Thread(target=RemindWords, args=(5*60,))
+    threads.append(t1)
+    t2 = threading.Thread(target=__RemindExams__, args=(10*60,))
+    threads.append(t2)
+    t3 = threading.Thread(target=__RemindExams__, args=(6*60*60,False,))
+    threads.append(t3)
 
     for t in threads:
         t.setDaemon(True)
