@@ -79,7 +79,7 @@ def BuildNextWordList(toRemindDict, laterRemindDict):
                     key + ' #'
                     + nextTime.strftime('%Y-%m-%d %H:%M')
                     + ' #' + str(level) + '\n')
-    with open(OldWordListFile, 'a+', encoding='utf-8'):
+    with open(OldWordListFile, 'a+', encoding='utf-8') as file:
         for word in oldWordList:
             file.write(
                 word + ' #'

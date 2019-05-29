@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup
 import os
 dir_path = os.path.abspath(os.path.dirname(__file__))
 
-cookie = 'TGC=eyJhbGciOiJIUzUxMiJ9.ZXlKNmFYQWlPaUpFUlVZaUxDSmhiR2NpT2lKa2FYSWlMQ0psYm1NaU9pSkJNVEk0UTBKRExVaFRNalUySW4wLi5Ta2xhUmVFRzNWN3RMcFkyck5SVmVnLmtSOEwyYlZ4UWxfZlRDYnBtR2xSZlRLM1FPX2w5Q1lJcWI2OTltT2M0NUVBYXJrWEZmbEx0aWtWbjJxY3oxU2k2VzhWQ0EyWnB6c092WnUwNkRkd1BCX1BaM3dfSFRTSVMxVkFGejJWT0h0bEI0RWRGa21yWEUxWm15RkZHclRiekxOd2paSkpIRTR0MUgtcFQ4UndDSFNMOVo1dkdJZW42TEkxeDVVUVNETkxxcFVBV3JvNTVraG94Wm9PNmZKWU0zLVlyVWwydUY0MkM4RUJYbXlfSzFNMVJCZFg3Y3A5NDZ0WHZ2bnl0bXhaZURjMTc3OUgtLVhkSWFTNUFJQ2UuT0ZCNW55SzdtTEtBLVVFMTRPQUpIdw==.-flM5OCKA4MGUCkmZ__3ib9oap_XPUZwt5bobNX13xXTm1eP3BAw5qmbNLzP6oqQtnLa9Yce9r-eKE37FaqFrw; cloud_sessionID=0cfbb0741a4a189e1f50b70220b6b880; _csrf-cloud=0f3e73b48c3e0377c1b017601c5ce0a787e4c64e09abb23f70a2a83206d86631a%3A2%3A%7Bi%3A0%3Bs%3A11%3A%22_csrf-cloud%22%3Bi%3A1%3Bs%3A32%3A%2260wr4Rbl2JXsgAaPZfY_oFyAt33Je_aM%22%3B%7D'
+cookie = 'TGC=eyJhbGciOiJIUzUxMiJ9.ZXlKNmFYQWlPaUpFUlVZaUxDSmhiR2NpT2lKa2FYSWlMQ0psYm1NaU9pSkJNVEk0UTBKRExVaFRNalUySW4wLi5fRVhJbmpPaVE5NzVnc1NHYjVQVnJRLlJyNm15MnhLNFhsN3VPODIxMXVGd3BSX01mTXJlQUpMTHRUdl9YMmtNREx0ZDg1dEtyblpDaEdneTBPaUxNMFgyQUVUSkc0UlpyZ25PRG9zLWlkbmx5blV3eXp2OC1HZkFxUjk4WGF4Sm53ZWpfZlo5OENZRng0S0FuTTdhR3YwWHFkN2dmeFU4bzdSUUg4UjVVeHNneGxXUUlRdGtnQ3Bhb19rNTVVTlU3OWQ5b3M4M0NWMV9LVVZJLXhGd1Nxa25VVTZ3UHFVSWpBUElFT3AwVWJzWDdEU2cyN0w3dG9tMGhfU2FZZ0Y4c2JmVFczdFNVUHY3SEtnRjlOYUlCMy0uLS0wenpJQlU0eEhJSEVsTk4tVV82QQ==.xppT1exc1EtdeqN1fTXSUBS7cHr71dWCm4td4jQA32venCOpFp6Ouqa3iJOAiXpe5WEyPfoZSW74CshNAsDT4w; cloud_sessionID=4c7330f7cfca85b563f5877728e2bd83; _csrf-cloud=e3d5075444007a0ea2cc42f4c53a186b0e88d38cc6b2f128fba00152600f87b0a%3A2%3A%7Bi%3A0%3Bs%3A11%3A%22_csrf-cloud%22%3Bi%3A1%3Bs%3A32%3A%22Tsq2MTKsaC5gt0Zr3PcSl3K3xiryzJFx%22%3B%7D'
 
 def parse_cookie(cookie):
     cookies_dict = {}
@@ -29,7 +29,13 @@ class ParseExamList():
     @classmethod
     def get(self, html):
         soup = BeautifulSoup(html, 'html.parser')
-        table = soup.find_all('table')[0]
+        _table = soup.find_all('table')
+
+        # 如果没有表格---cookie过期
+        if len(_table) == 0:
+            return None
+
+        table = _table[0]
 
         # Table Head
         table_heads = []
@@ -66,6 +72,13 @@ class ExamReminder():
         html = DownloadHtml.get()
         examsList = ParseExamList.get(html)
 
+        # cookie过期
+        if examsList == None:
+            return {
+                'status' : 'wrong',
+                'examList': []
+            }
+
         # new exam info
         if self.CheckExams(self, examsList):
             return {
@@ -80,11 +93,12 @@ class ExamReminder():
 
     @classmethod
     def format_exam(self, examList):
-        text = ''
+        text = f'查询到 {len(examList)} 条考试信息：\n'
+        text += '------------------------------\n'
         for exam in examList:
             for key, value in exam.items():
                 text += str(key) + ':' + str(value) + '\n'
-            text += '\n'
+            text += '------------------------------\n'
         return text
 
     def CheckExams(self, examList):

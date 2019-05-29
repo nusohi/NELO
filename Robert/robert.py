@@ -137,16 +137,26 @@ def RemindExams(inc, check_status=True):
 def __RemindExams__(inc, check_status=True):
     while(True):
         response = ExamReminder.check()
-        if response['status'] != 'new' and check_status:
+        _nuso_toUserName = UpdateUserName()
+
+        if response['status'] == 'wrong':
+            itchat.send(
+                'cookie 过期，快更新！',
+                toUserName=_nuso_toUserName
+            )
+            print('----> cookie 过期，未能正常查询.')
+
+        elif response['status'] != 'new' and check_status:
             print('已查询考试信息，没有新的考试消息')
+
         else:
-            _nuso_toUserName = UpdateUserName()
             itchat.send(
                 ExamReminder.format_exam(response['examList']),
                 toUserName=_nuso_toUserName
             )
             print('已发送考试信息----------------------------------------')
             print(ExamReminder.format_exam(response['examList']))
+            
         time.sleep(inc)
 
 
