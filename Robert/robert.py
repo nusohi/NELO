@@ -3,8 +3,10 @@ import sys
 path = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.append(path)
 
-from UJSExamQuery.ExamQuery import *  # import ExamQuery
+from Spider.ExamQuery import *  # import ExamQuery
+from Spider.ElecQuery import *
 from conf import FriendPass, FriendList, friendList, nuso_toUserName, enableCmdQR
+
 import itchat
 import threading
 from threading import Timer
@@ -159,6 +161,17 @@ def __RemindExams__(inc, check_status=True):
             
         time.sleep(inc)
 
+def RemindElec(inv):
+    while(True):
+        left_elec, msg = ElecQuery.get()
+        _nuso_toUserName = UpdateUserName()
+        if int(left_elec) < 60:
+            itchat.send(msg, toUserName=_nuso_toUserName)
+
+        print('-------------电费查询----')
+        print(msg)
+        time.sleep(inv)
+
 
 if __name__ == '__main__':
     # itchat 登陆
@@ -171,10 +184,12 @@ if __name__ == '__main__':
     threads = []
     t1 = threading.Thread(target=RemindWords, args=(5*60,))
     threads.append(t1)
-    t2 = threading.Thread(target=__RemindExams__, args=(10*60,))
+    t2 = threading.Thread(target=__RemindExams__, args=(20*60,))
     threads.append(t2)
     t3 = threading.Thread(target=__RemindExams__, args=(6*60*60,False,))
     threads.append(t3)
+    t4 = threading.Thread(target=RemindElec, args=(1*60*60,))
+    threads.append(t4)
 
     for t in threads:
         t.setDaemon(True)
