@@ -1,12 +1,15 @@
 # coding="utf-8"
-
+if __name__ == '__main__':
+    import os
+    import sys
+    path = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+    sys.path.append(path)
 import re
 import requests
 import json
 import string
 from bs4 import BeautifulSoup
 from conf import CityCodePath, CityNamePath
-
 
 
 class Weather():

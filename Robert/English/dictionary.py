@@ -1,9 +1,15 @@
 # coding="utf-8"
+import os
+import sys
 import re
 import requests
 import json
 import datetime
 from bs4 import BeautifulSoup
+path = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+sys.path.append(path)
+sys.path.append(os.path.dirname(__file__))
+
 import baidufanyi
 from conf import alphabetPath
 
