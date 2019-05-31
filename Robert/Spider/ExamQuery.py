@@ -1,10 +1,11 @@
 import requests
 import json
+import datetime
 from bs4 import BeautifulSoup
 import os
 dir_path = os.path.abspath(os.path.dirname(__file__))
 
-cookie = 'TGC=eyJhbGciOiJIUzUxMiJ9.ZXlKNmFYQWlPaUpFUlVZaUxDSmhiR2NpT2lKa2FYSWlMQ0psYm1NaU9pSkJNVEk0UTBKRExVaFRNalUySW4wLi5fRVhJbmpPaVE5NzVnc1NHYjVQVnJRLlJyNm15MnhLNFhsN3VPODIxMXVGd3BSX01mTXJlQUpMTHRUdl9YMmtNREx0ZDg1dEtyblpDaEdneTBPaUxNMFgyQUVUSkc0UlpyZ25PRG9zLWlkbmx5blV3eXp2OC1HZkFxUjk4WGF4Sm53ZWpfZlo5OENZRng0S0FuTTdhR3YwWHFkN2dmeFU4bzdSUUg4UjVVeHNneGxXUUlRdGtnQ3Bhb19rNTVVTlU3OWQ5b3M4M0NWMV9LVVZJLXhGd1Nxa25VVTZ3UHFVSWpBUElFT3AwVWJzWDdEU2cyN0w3dG9tMGhfU2FZZ0Y4c2JmVFczdFNVUHY3SEtnRjlOYUlCMy0uLS0wenpJQlU0eEhJSEVsTk4tVV82QQ==.xppT1exc1EtdeqN1fTXSUBS7cHr71dWCm4td4jQA32venCOpFp6Ouqa3iJOAiXpe5WEyPfoZSW74CshNAsDT4w; cloud_sessionID=4c7330f7cfca85b563f5877728e2bd83; _csrf-cloud=e3d5075444007a0ea2cc42f4c53a186b0e88d38cc6b2f128fba00152600f87b0a%3A2%3A%7Bi%3A0%3Bs%3A11%3A%22_csrf-cloud%22%3Bi%3A1%3Bs%3A32%3A%22Tsq2MTKsaC5gt0Zr3PcSl3K3xiryzJFx%22%3B%7D'
+cookie = '_csrf-cloud=85a286079bd88bb0cb09b9b4ece0ce7bb0169d5af5221e4ef2b9b0b998374c2fa%3A2%3A%7Bi%3A0%3Bs%3A11%3A%22_csrf-cloud%22%3Bi%3A1%3Bs%3A32%3A%22Ygm3DQnjzGApCZAAl12Iyij9jDDZ-z7C%22%3B%7D; TGC=eyJhbGciOiJIUzUxMiJ9.ZXlKNmFYQWlPaUpFUlVZaUxDSmhiR2NpT2lKa2FYSWlMQ0psYm1NaU9pSkJNVEk0UTBKRExVaFRNalUySW4wLi5Kcm9ReHkxYTd1bVk5QzRaQVFpNzB3LlNvRXFySmttSmdmVFpZWE1rSmlVZko1TnBhNW85cVpSZmN3MTM5Zmo0R21UbXdFNTVDOVpLTi1FYzlxNFJ4Q24xSnhSZEZSVVktRkFOaXRzU3k2VkRqZUlaLVZzSkdiTlNrY0JNMUdWaENiTndTdUFVTF9oaGVEck9xQk5rRVdqWkVCQmRPQWlOSkRBWTZQOUxwUVJLTTg0UmJycldTcnAtUDJ2OW1nbkpIU0RmN0t1V0p3M2V5ZlAtM2IwZzNRUFRrVEVqOGMxSVkzb1BPVWtubnR1dkp3czZMcWd1RzY2QmVYU1ZuUTc4Q19jQWlNYU1jell3ZkhCWXJRMUhmaUQuNnhsa2Q5Rm4tSVRqQk5yaTV5VlpvZw==.YuUTzk4mFw2lDsE1sQohhQYZa8aIU1kqCudfNoTg1NCvC-X055H9SEaeQCEpynOHovrbex6QOs25oeQKwMbmSA; cloud_sessionID=234f5fb57377088c8cf6f4c9a869408c'
 
 def parse_cookie(cookie):
     cookies_dict = {}
@@ -59,13 +60,26 @@ class ParseExamList():
 
         return exams
 
+    @classmethod
+    def clean_old(self, exam_list):
+        new_exam_list = []
+        today = datetime.datetime.now()
+
+        for exam in exam_list:
+            date_str = exam['时间'].split('(')[1].split(')')[0]     # 2019-04-18
+            date = datetime.datetime.strptime(date_str, '%Y-%m-%d')
+            if date > today:
+                new_exam_list.append(exam)
+        
+        return new_exam_list
+
+
 
 class ExamReminder():
 
     @classmethod
-    def check(self):
-        self.LoadExams(self)
-        last_len_exams = len(self.exams)
+    def check(self, clean_old=True):
+        oldList = self.LoadExams(self)
 
         html = DownloadHtml.get()
         examsList = ParseExamList.get(html)
@@ -77,8 +91,13 @@ class ExamReminder():
                 'examList': []
             }
 
+        # 清洗已考的
+        if clean_old:
+            examsList = ParseExamList.clean_old(examsList)
+            oldList = ParseExamList.clean_old(oldList)
+
         # new exam info
-        if self.CheckExams(self, examsList):
+        if examsList == oldList:
             return {
                 'status': 'latest',
                 'examList': examsList
@@ -99,14 +118,6 @@ class ExamReminder():
             text += '------------------------------\n'
         return text
 
-    def CheckExams(self, examList):
-        if len(self.exams) != len(examList):
-            return False
-        for i in range(len(self.exams)):
-            if self.exams[i] != examList[i]:
-                return False
-        return True
-
     def LoadExams(self):
         # 创建文件夹及文件
         if not os.path.exists(dir_path + '/io'):
@@ -115,7 +126,7 @@ class ExamReminder():
         if not os.path.exists(exam_file_path):
             open(exam_file_path, 'w').close()
             self.exams=[]
-            return
+            return []
         
         with open(exam_file_path, 'r', encoding='utf-8') as file:
             self.exams_json = json.loads(file.read())
@@ -123,7 +134,10 @@ class ExamReminder():
             self.exams = self.exams_json['exams']
         else:
             self.exams = []
+        
+        return self.exams
 
 
 if __name__ == '__main__':
     res = ExamReminder.check()
+    print(res)

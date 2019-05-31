@@ -2,7 +2,7 @@ import os
 import sys
 from platform import system
 PROJECT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__)))
-PROJECT_PATH += '\\'
+PROJECT_PATH += '/'
 
 IS_SERVER = system() == 'Linux'
 enableCmdQR = False if not IS_SERVER else True
