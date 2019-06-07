@@ -1,11 +1,12 @@
 import requests
 import json
 import datetime
+import re
 from bs4 import BeautifulSoup
 import os
 dir_path = os.path.abspath(os.path.dirname(__file__))
 
-cookie = '_csrf-cloud=85a286079bd88bb0cb09b9b4ece0ce7bb0169d5af5221e4ef2b9b0b998374c2fa%3A2%3A%7Bi%3A0%3Bs%3A11%3A%22_csrf-cloud%22%3Bi%3A1%3Bs%3A32%3A%22Ygm3DQnjzGApCZAAl12Iyij9jDDZ-z7C%22%3B%7D; TGC=eyJhbGciOiJIUzUxMiJ9.ZXlKNmFYQWlPaUpFUlVZaUxDSmhiR2NpT2lKa2FYSWlMQ0psYm1NaU9pSkJNVEk0UTBKRExVaFRNalUySW4wLi5Kcm9ReHkxYTd1bVk5QzRaQVFpNzB3LlNvRXFySmttSmdmVFpZWE1rSmlVZko1TnBhNW85cVpSZmN3MTM5Zmo0R21UbXdFNTVDOVpLTi1FYzlxNFJ4Q24xSnhSZEZSVVktRkFOaXRzU3k2VkRqZUlaLVZzSkdiTlNrY0JNMUdWaENiTndTdUFVTF9oaGVEck9xQk5rRVdqWkVCQmRPQWlOSkRBWTZQOUxwUVJLTTg0UmJycldTcnAtUDJ2OW1nbkpIU0RmN0t1V0p3M2V5ZlAtM2IwZzNRUFRrVEVqOGMxSVkzb1BPVWtubnR1dkp3czZMcWd1RzY2QmVYU1ZuUTc4Q19jQWlNYU1jell3ZkhCWXJRMUhmaUQuNnhsa2Q5Rm4tSVRqQk5yaTV5VlpvZw==.YuUTzk4mFw2lDsE1sQohhQYZa8aIU1kqCudfNoTg1NCvC-X055H9SEaeQCEpynOHovrbex6QOs25oeQKwMbmSA; cloud_sessionID=234f5fb57377088c8cf6f4c9a869408c'
+cookie = 'TGC=eyJhbGciOiJIUzUxMiJ9.ZXlKNmFYQWlPaUpFUlVZaUxDSmhiR2NpT2lKa2FYSWlMQ0psYm1NaU9pSkJNVEk0UTBKRExVaFRNalUySW4wLi44bGRPcEZ2WEtHNVNLcHZNUlkzREJnLmpld0V5LVdEcFJfX20yaGFqY21ySGxKM1MzM3RUaTlLWjdmV3pxcVNVc3dvVUx3MDB1QWJUdmhkMXBEaFhWOUNUaWVXTUZuUV9YblRuTHJDSmZWM1lqY2RVai0xdWwzcHhWbERhMk54QTVpaUtXUlVzVzZFWkN5dFJ2a09lUHZtQ1FTYUtLSVBVSjhxajA1NTY0MVFZR25Mb1hrWlIwYVVuRXFGMDFURmZhU1AwQzU0WlctaEdjMnFoSlFXYk5ZWXcwOHdsMHhhVFFRTGx1TWVIYjBFWFFPX2NNOEIxaldBNDlZY1B0VlFMZUNsamFtYXBuZENfTTV6dkNMNHp6OXYuSWxuUl9KVWQ3czY4Q0JERjJubDJ3Zw==.o02_BpU2TqOAEGFOgHSyK5ZkXA6eYkfTdLhhFXaVJwkvq8-93na7G_phka7f2J6XKpzusrQxANYX2Dtt4PgobQ; cloud_sessionID=752de73dcbbcd04086318d5a7aa96a63; _csrf-cloud=11bca40db57d83f7638439470c37b38e6ca2b0116781bf5944fb1a32d8f72fc9a%3A2%3A%7Bi%3A0%3Bs%3A11%3A%22_csrf-cloud%22%3Bi%3A1%3Bs%3A32%3A%22Zfo69IMkwIG155hI51IMV4vQEEDWJiO9%22%3B%7D'
 
 def parse_cookie(cookie):
     cookies_dict = {}
@@ -65,9 +66,15 @@ class ParseExamList():
         new_exam_list = []
         today = datetime.datetime.now()
 
+        date_pattern = re.compile(r'(\d{4}).(\d{2}).(\d{2})')   # 2019-04-18 2019年06月21
+
         for exam in exam_list:
-            date_str = exam['时间'].split('(')[1].split(')')[0]     # 2019-04-18
-            date = datetime.datetime.strptime(date_str, '%Y-%m-%d')
+            match = date_pattern.match(exam['时间'])
+            if match == None:
+                continue
+            date_group = match.groups()
+            date = datetime.datetime(int(date_group[0]), int(date_group[1]), int(date_group[2]))
+
             if date > today:
                 new_exam_list.append(exam)
         
