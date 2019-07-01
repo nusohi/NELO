@@ -9,15 +9,21 @@
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <title>微指令生成器</title>
     <style>
+        #raw-order-btn ,
         #FINAL_space {
             cursor: pointer;
         }
 
+        #raw-order {
+            text-transform: uppercase;
+        }
+
+        #orders-field ,
         #copy-field {
             border: 0;
             border-radius: 5px;
-            background-color: rgba(241, 241, 241, .98);
-            color: rgb(104, 104, 104);
+            background-color: rgba(247, 247, 247, 0.98);
+            color: rgb(158, 158, 158);
             padding: 5px;
             resize: none;
         }
@@ -27,48 +33,54 @@
 <body>
 
     <div class="container">
-        <!-- 输入框 -->
-        <div class="row mt-3">
-            <!-- <div class="col-2"></div> -->
-            <div class="col-3">
-                <div class="input-group flex-nowrap">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">微命令</span>
+        
+        <div class="row">
+            <!-- 微命令选择按钮组 -->
+            <div class="col-10 row mt-3" id="orders"></div>
+
+            <!-- 输入框 -->
+            <div class="col-2 mt-3">
+                <div class="row mb-3">
+                    <div class="input-group flex-nowrap">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">BM</span>
+                        </div>
+                        <input type="text" class="form-control" id="BM" placeholder="十进制">
                     </div>
-                    <input type="text" class="form-control" id="FN" placeholder="空格隔开">
                 </div>
-            </div>
-            <div class="col-2">
-                <div class="input-group flex-nowrap">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">BM</span>
+                <div class="row mb-3">
+                    <div class="input-group flex-nowrap">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">NA</span>
+                        </div>
+                        <input type="text" class="form-control" id="NA" placeholder="十六进制">
                     </div>
-                    <input type="text" class="form-control" id="BM" placeholder="十进制">
                 </div>
-            </div>
-            <div class="col-2">
-                <div class="input-group flex-nowrap">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">NA</span>
+                
+                <div class="row mb-3">
+                    <div class="btn btn-danger btn-block" id="FINAL_space" data-toggle="tooltip" data-placement="left">
+                        NUSO
                     </div>
-                    <input type="text" class="form-control" id="NA" placeholder="十六进制">
                 </div>
-            </div>
-            <div class="col-1">
-                <div class="btn btn-primary" id="GO">GO</div>
-            </div>
-            <div class="col-2">
-                <textarea name="" id="copy-field" cols="10" rows="1" readonly>NUSO</textarea>
-            </div>
-            <div class="col-2">
-                <div class="btn btn-danger btn-block" id="FINAL_space" data-toggle="tooltip" data-placement="left">
-                    NUSO
+                <div class="row mb-3">
+                    <textarea class="col text-center" id="copy-field" cols="8" rows="1" readonly>NUSO</textarea>
+                </div>
+
+                <!-- 微指令转微命令 -->
+                <hr>
+                <div class="row mb-3">
+                    <div class="input-group flex-nowrap">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="raw-order-btn">微指令</span>
+                        </div>
+                        <input type="text" class="form-control" onfocus="this.select()" maxlength="8" id="raw-order" placeholder="十六进制">
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <textarea class="col" id="orders-field" rows="2" readonly>微指令转微命令</textarea>
                 </div>
             </div>
         </div>
-
-        <!-- 微命令选择按钮组 -->
-        <div class="row mt-3" id="orders"></div>
 
         <!-- 各个命令的二进制形式 -->
         <div class="row mt-5">
@@ -153,6 +165,31 @@
             document.execCommand("Copy")
         })
 
+        // 点击微指令转换微命令
+        $('#raw-order-btn').off('click').click(function(){
+            HEX = parseInt($('#raw-order').val(), 16)
+            BIT = ZERO(HEX.toString(2), 32) // 要补0
+
+            var cur_index = 0   // sclice -> [0, 4)
+            var order_texts = ''
+            F_bit.forEach((width, index) => {
+                var cur_order = BIT.slice(cur_index, cur_index + width)
+                var index_in_group = parseInt(cur_order, 2)
+                cur_index = cur_index + width
+
+                if(index == 8){
+                    order_texts += 'BM={0} '.format(index_in_group)
+                } else if(index == 9){
+                    order_texts += 'NA={0} '.format(index_in_group)
+                } else {
+                    order_texts += index_in_group == 0 ? '' : (F[index][index_in_group] + ' ')
+                }
+            })
+            // 显示
+            order_texts = order_texts.replace(/undefined /g, '')
+            $('#orders-field').html(order_texts)
+        })
+
         function BUTTONS() {
             F.forEach((fn, i) => {
                 var html = '<div class="col">\n'
@@ -212,6 +249,7 @@
             return F_index
         }
 
+        /// 弃用
         function get_F_index_from_input() {
             var FN_text = $("#FN").val()
             var orders = FN_text.trim().split(/\s+/);    // 去两头空格 replace(/^\s+|\s+$/g, "");
@@ -239,6 +277,7 @@
             console.log(F_index)
             return F_index
         }
+
 
         function CALULATE(F_B) {
             // 补0
