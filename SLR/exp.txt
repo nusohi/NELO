@@ -1,0 +1,44 @@
+FINAL E
+E E + E
+E E * E
+E ( E )
+E i
+E ci
+
+
+
+EOF
+
+
+
+
+
+FINAL S
+S if B then S else S
+S while B do S
+S begin L end
+S A
+
+L S ; L
+L S
+
+A i := E
+
+B BA B
+B BO B
+B not B
+B ( B )
+B i rop i
+B i
+BA B and
+BO B or
+
+E E + E
+E E * E
+E ( E )
+E i
+E ci
+
+
+
+EOF

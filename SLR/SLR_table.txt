@@ -1,0 +1,12 @@
+状态	ci	i	+	*	(	)	#	E
+0	s4	s3	 	 	s2	 	 	1
+1	 	 	s5	s6	 	 	ACC	 
+2	s4	s3	 	 	s2	 	 	7
+3	 	 	r4	r4	 	r4	r4	 
+4	 	 	r5	r5	 	r5	r5	 
+5	s4	s3	 	 	s2	 	 	8
+6	s4	s3	 	 	s2	 	 	9
+7	 	 	s5	s6	 	s10	 	 
+8	 	 	r1	s6	 	r1	r1	 
+9	 	 	r2	r2	 	r2	r2	 
+10	 	 	r3	r3	 	r3	r3	 
