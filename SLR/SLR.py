@@ -3,7 +3,7 @@
 @Author: nuso
 @LastEditors: nuso
 @Date: 2020-06-29 17:10:02
-@LastEditTime: 2020-06-30 18:39:27
+@LastEditTime: 2020-06-30 22:17:21
 '''
 import queue
 from collections import Iterable
@@ -81,7 +81,8 @@ class SLR():
         self.First = {}
         self.Follow = {}
 
-        self.LeftCombs = []  # 左结合的情况
+        self.LeftCombs = {}  # 左结合的情况
+        self.conflicts = []  # 产生的冲突
 
     # 分析主函数
     def Run(self):
@@ -101,8 +102,11 @@ class SLR():
     # 设置左结合
     def SetLeftCombs(self, combs):
         for comb in combs:
-            self.LeftCombs.append(comb)
-        pass
+            if len(comb) == 2:      # ('*', 1)
+                self.LeftCombs[comb] = True
+            elif len(comb) == 3:    # ('+', 1, False)
+                self.LeftCombs[(comb[0], comb[1])] = comb[2]
+                pass
 
     # 初始化 所有项目
     def InitProjects(self):
@@ -186,7 +190,11 @@ class SLR():
 
     # 因左结合而需要移进的判定
     def NeedShift(self, key_ts, expIndex):
-        return (self.Keys[key_ts], expIndex) in self.LeftCombs
+        tup = (self.Keys[key_ts], expIndex)
+        if tup in self.LeftCombs:
+            return self.LeftCombs[tup]
+        else:
+            print(f"没有配置的冲突: {tup}")
 
     # 读入一条产生式
     def ReadOneLine(self, line):
@@ -281,7 +289,12 @@ class SLR():
                 ns = self.expressions[pro[0]][0]
                 for key in self.Follow[ns].all():
                     s = ('r' + str(pro[0])) if pro[0] != 0 else 'ACC'
-                    if line[key] != ' ':     # 有冲突
+                    if line[key] != ' ':            # 有冲突
+                        self.conflicts.append((     # 记录该冲突
+                            self.Keys[key],
+                            pro[0],
+                            self.NeedShift(key, pro[0])
+                        ))
                         if self.NeedShift(key, pro[0]):
                             continue
                     line[key] = s
@@ -298,6 +311,8 @@ class SLR():
         self.Table = table
 
     def ResetTableHead(self, head):
+        if len(head) == 0:
+            return
         head = [self.Key2Index[key] for key in head]
         self.TableHead = head
 
@@ -352,27 +367,48 @@ class SLR():
             lines += str(i)+'\t' + '\t'.join(tl) + '\n'
         return lines
 
+    def LogConflicts(self):
+        print('>> Conflicts >>>>>>>>>>>>>>>>>>>>>>>>')
+        for conflict in self.conflicts:
+            print(conflict)
+        print('<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
+
 
 if __name__ == '__main__':
     config = {
         'GrammarFile': 'SLR/exp.txt',       # 文法需为拓广文法，有起始符(FINAL, S')
         'OutputFile': 'SLR/SLR_table.txt',
-        'PrintTable': True,
-        'TableHead': ['ci', 'i', '+', '*', '(', ')', '#', 'E'],
-        'LeftCombs': [('*', 1)]
+        'PrintTable': False,
+        'PrintConflicts': True,
+        'TableHead': [],  # ['ci', 'i', '+', '*', '(', ')', '#', 'E'],  # 为空不改
+        'LeftCombs': [
+            ('*', 1),
+            ('and', 8, True),
+            ('or', 8, True),
+            ('and', 9, False),  # and 优先级高于 or, 不能左结合
+            ('or', 9, True),
+            ('and', 10, True),  # not 优先级高于 and
+            ('or', 10, True),   # not 优先级高于 or
+            ('+', 16, True),
+            ('*', 16, False),
+            ('+', 17, True),
+            ('*', 17, True),
+        ]     # 冲突中遇到 * 执行 shift 而不是 r1
     }
 
     slr = SLR()
 
+    # 从 txt 中读入文法
     with open(config['GrammarFile']) as f:
         for line in f.readlines():
             if line.startswith("EOF"):
                 break
             slr.ReadOneLine(line.strip('\n'))
 
+    # 先添加冲突时的左结合规则(依据字符优先级手动配置)
     slr.SetLeftCombs(config['LeftCombs'])
 
-    slr.Run()
+    slr.Run()       # 构造分析表的主函数
     slr.LogFamily()
     slr.LogFirstOrFollow()
     slr.LogFirstOrFollow(False)
@@ -387,5 +423,8 @@ if __name__ == '__main__':
         print('================================>')
         print(table)
         print('<================================')
+
+    if config['PrintConflicts']:
+        slr.LogConflicts()
 
     print('#################################nuso')

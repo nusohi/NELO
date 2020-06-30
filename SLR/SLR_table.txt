@@ -1,12 +1,46 @@
-状态	ci	i	+	*	(	)	#	E
-0	s4	s3	 	 	s2	 	 	1
-1	 	 	s5	s6	 	 	ACC	 
-2	s4	s3	 	 	s2	 	 	7
-3	 	 	r4	r4	 	r4	r4	 
-4	 	 	r5	r5	 	r5	r5	 
-5	s4	s3	 	 	s2	 	 	8
-6	s4	s3	 	 	s2	 	 	9
-7	 	 	s5	s6	 	s10	 	 
-8	 	 	r1	s6	 	r1	r1	 
-9	 	 	r2	r2	 	r2	r2	 
-10	 	 	r3	r3	 	r3	r3	 
+状态	if	then	else	while	do	begin	end	;	i	:=	not	(	)	rop	and	or	+	*	ci	#	S	B	L	A	E	BA	BO
+0	s2	 	 	s3	 	s4	 	 	s6	 	 	 	 	 	 	 	 	 	 	 	1	 	 	5	 	 	 
+1	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	ACC	 	 	 	 	 	 	 
+2	 	 	 	 	 	 	 	 	s12	 	s10	s11	 	 	 	 	 	 	 	 	 	7	 	 	 	8	9
+3	 	 	 	 	 	 	 	 	s12	 	s10	s11	 	 	 	 	 	 	 	 	 	13	 	 	 	8	9
+4	s2	 	 	s3	 	s4	 	 	s6	 	 	 	 	 	 	 	 	 	 	 	15	 	14	5	 	 	 
+5	 	 	r4	 	 	 	r4	r4	 	 	 	 	 	 	 	 	 	 	 	r4	 	 	 	 	 	 	 
+6	 	 	 	 	 	 	 	 	 	s16	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 
+7	 	s17	 	 	 	 	 	 	 	 	 	 	 	 	s18	s19	 	 	 	 	 	 	 	 	 	 	 
+8	 	 	 	 	 	 	 	 	s12	 	s10	s11	 	 	 	 	 	 	 	 	 	20	 	 	 	8	9
+9	 	 	 	 	 	 	 	 	s12	 	s10	s11	 	 	 	 	 	 	 	 	 	21	 	 	 	8	9
+10	 	 	 	 	 	 	 	 	s12	 	s10	s11	 	 	 	 	 	 	 	 	 	22	 	 	 	8	9
+11	 	 	 	 	 	 	 	 	s12	 	s10	s11	 	 	 	 	 	 	 	 	 	23	 	 	 	8	9
+12	 	r13	 	 	r13	 	 	 	 	 	 	 	r13	s24	r13	r13	 	 	 	 	 	 	 	 	 	 	 
+13	 	 	 	 	s25	 	 	 	 	 	 	 	 	 	s18	s19	 	 	 	 	 	 	 	 	 	 	 
+14	 	 	 	 	 	 	s26	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 
+15	 	 	 	 	 	 	r6	s27	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 
+16	 	 	 	 	 	 	 	 	s30	 	 	s29	 	 	 	 	 	 	s31	 	 	 	 	 	28	 	 
+17	s2	 	 	s3	 	s4	 	 	s6	 	 	 	 	 	 	 	 	 	 	 	32	 	 	5	 	 	 
+18	 	 	 	 	 	 	 	 	r14	 	r14	r14	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 
+19	 	 	 	 	 	 	 	 	r15	 	r15	r15	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 
+20	 	r8	 	 	r8	 	 	 	 	 	 	 	r8	 	s18	s19	 	 	 	 	 	 	 	 	 	 	 
+21	 	r9	 	 	r9	 	 	 	 	 	 	 	r9	 	r9	s19	 	 	 	 	 	 	 	 	 	 	 
+22	 	r10	 	 	r10	 	 	 	 	 	 	 	r10	 	s18	s19	 	 	 	 	 	 	 	 	 	 	 
+23	 	 	 	 	 	 	 	 	 	 	 	 	s33	 	s18	s19	 	 	 	 	 	 	 	 	 	 	 
+24	 	 	 	 	 	 	 	 	s34	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 
+25	s2	 	 	s3	 	s4	 	 	s6	 	 	 	 	 	 	 	 	 	 	 	35	 	 	5	 	 	 
+26	 	 	r3	 	 	 	r3	r3	 	 	 	 	 	 	 	 	 	 	 	r3	 	 	 	 	 	 	 
+27	s2	 	 	s3	 	s4	 	 	s6	 	 	 	 	 	 	 	 	 	 	 	15	 	36	5	 	 	 
+28	 	 	r7	 	 	 	r7	r7	 	 	 	 	 	 	 	 	s37	s38	 	r7	 	 	 	 	 	 	 
+29	 	 	 	 	 	 	 	 	s30	 	 	s29	 	 	 	 	 	 	s31	 	 	 	 	 	39	 	 
+30	 	 	r19	 	 	 	r19	r19	 	 	 	 	r19	 	 	 	r19	r19	 	r19	 	 	 	 	 	 	 
+31	 	 	r20	 	 	 	r20	r20	 	 	 	 	r20	 	 	 	r20	r20	 	r20	 	 	 	 	 	 	 
+32	 	 	s40	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 
+33	 	r11	 	 	r11	 	 	 	 	 	 	 	r11	 	r11	r11	 	 	 	 	 	 	 	 	 	 	 
+34	 	r12	 	 	r12	 	 	 	 	 	 	 	r12	 	r12	r12	 	 	 	 	 	 	 	 	 	 	 
+35	 	 	r2	 	 	 	r2	r2	 	 	 	 	 	 	 	 	 	 	 	r2	 	 	 	 	 	 	 
+36	 	 	 	 	 	 	r5	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 
+37	 	 	 	 	 	 	 	 	s30	 	 	s29	 	 	 	 	 	 	s31	 	 	 	 	 	41	 	 
+38	 	 	 	 	 	 	 	 	s30	 	 	s29	 	 	 	 	 	 	s31	 	 	 	 	 	42	 	 
+39	 	 	 	 	 	 	 	 	 	 	 	 	s43	 	 	 	s37	s38	 	 	 	 	 	 	 	 	 
+40	s2	 	 	s3	 	s4	 	 	s6	 	 	 	 	 	 	 	 	 	 	 	44	 	 	5	 	 	 
+41	 	 	r16	 	 	 	r16	r16	 	 	 	 	r16	 	 	 	s37	r16	 	r16	 	 	 	 	 	 	 
+42	 	 	r17	 	 	 	r17	r17	 	 	 	 	r17	 	 	 	s37	s38	 	r17	 	 	 	 	 	 	 
+43	 	 	r18	 	 	 	r18	r18	 	 	 	 	r18	 	 	 	r18	r18	 	r18	 	 	 	 	 	 	 
+44	 	 	r1	 	 	 	r1	r1	 	 	 	 	 	 	 	 	 	 	 	r1	 	 	 	 	 	 	 

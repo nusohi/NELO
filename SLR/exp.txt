@@ -1,13 +1,4 @@
-FINAL E
-E E + E
-E E * E
-E ( E )
-E i
-E ci
 
-
-
-EOF
 
 
 
@@ -33,6 +24,18 @@ B i
 BA B and
 BO B or
 
+E E + E
+E E * E
+E ( E )
+E i
+E ci
+
+
+
+EOF
+
+
+FINAL E
 E E + E
 E E * E
 E ( E )
