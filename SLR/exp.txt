@@ -1,4 +1,41 @@
+FINAL S
 
+S if_else S
+if_else ifB then S else
+ifB if B
+
+S WB do S
+WB W B
+W while
+
+
+S begin L end
+S A
+
+L LS L
+LS L ;
+L S
+
+A i := E
+
+B BA B
+B BO B
+B not B
+B ( B )
+B i rop i
+B i
+BA B and
+BO B or
+
+E E + E
+E E * E
+E ( E )
+E i
+E ci
+
+
+
+EOF
 
 
 

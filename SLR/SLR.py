@@ -3,7 +3,7 @@
 @Author: nuso
 @LastEditors: nuso
 @Date: 2020-06-29 17:10:02
-@LastEditTime: 2020-06-30 22:17:21
+@LastEditTime: 2020-07-01 15:13:38
 '''
 import queue
 from collections import Iterable
@@ -189,7 +189,7 @@ class SLR():
         return projs
 
     # 因左结合而需要移进的判定
-    def NeedShift(self, key_ts, expIndex):
+    def LeftPrior(self, key_ts, expIndex):
         tup = (self.Keys[key_ts], expIndex)
         if tup in self.LeftCombs:
             return self.LeftCombs[tup]
@@ -288,16 +288,16 @@ class SLR():
                 # 遍历该产生式左部的 Follow 集
                 ns = self.expressions[pro[0]][0]
                 for key in self.Follow[ns].all():
-                    s = ('r' + str(pro[0])) if pro[0] != 0 else 'ACC'
-                    if line[key] != ' ':            # 有冲突
+                    if line[key] != ' ':            # 有冲突    shift/reduce
                         self.conflicts.append((     # 记录该冲突
                             self.Keys[key],
                             pro[0],
-                            self.NeedShift(key, pro[0])
+                            self.LeftPrior(key, pro[0])
                         ))
-                        if self.NeedShift(key, pro[0]):
-                            continue
-                    line[key] = s
+                        if not self.LeftPrior(key, pro[0]):
+                            continue    # 保持之前的 shift
+                    s = ('r' + str(pro[0])) if pro[0] != 0 else 'ACC'
+                    line[key] = s       # 规约 reduce
 
         self._table_ = self.Table
 
@@ -382,18 +382,29 @@ if __name__ == '__main__':
         'PrintConflicts': True,
         'TableHead': [],  # ['ci', 'i', '+', '*', '(', ')', '#', 'E'],  # 为空不改
         'LeftCombs': [
-            ('*', 1),
-            ('and', 8, True),
-            ('or', 8, True),
-            ('and', 9, False),  # and 优先级高于 or, 不能左结合
-            ('or', 9, True),
-            ('and', 10, True),  # not 优先级高于 and
-            ('or', 10, True),   # not 优先级高于 or
-            ('+', 16, True),
-            ('*', 16, False),
-            ('+', 17, True),
-            ('*', 17, True),
-        ]     # 冲突中遇到 * 执行 shift 而不是 r1
+            # ('*', 1),           # 冲突中遇到 * 执行 shift 而不是 r1
+            # ('and', 8, True),
+            # ('or', 8, True),
+            # ('and', 9, False),  # and 优先级高于 or, 不能左结合
+            # ('or', 9, True),
+            # ('and', 10, True),  # not 优先级高于 and
+            # ('or', 10, True),   # not 优先级高于 or
+            # ('+', 16, True),
+            # ('*', 16, False),
+            # ('+', 17, True),
+            # ('*', 17, True),
+            (';', 9, True),
+            ('and', 13, True),
+            ('or', 13, True),
+            ('and', 14, False),
+            ('or', 14, True),
+            ('and', 15, True),
+            ('or', 15, True),
+            ('+', 21, True),
+            ('*', 21, False),
+            ('+', 22, True),
+            ('*', 22, True),
+        ],
     }
 
     slr = SLR()
