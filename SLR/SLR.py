@@ -3,7 +3,7 @@
 @Author: nuso
 @LastEditors: nuso
 @Date: 2020-06-29 17:10:02
-@LastEditTime: 2020-07-01 15:13:38
+@LastEditTime: 2020-07-01 18:37:28
 '''
 import queue
 from collections import Iterable
@@ -85,7 +85,10 @@ class SLR():
         self.conflicts = []  # 产生的冲突
 
     # 分析主函数
-    def Run(self):
+    def Run(self, grammarPath, leftComb=[]):
+        self.LoadGrammar(grammarPath)
+        self.SetLeftCombs(leftComb)
+
         self.InitTSNS()
         # 手动添加 TS # sharp
         self.Keys.append('#')
@@ -98,6 +101,14 @@ class SLR():
         self.InitFamily()
         self.InitTable()
         self.CleanTable()
+
+    # 从 txt 中读入文法
+    def LoadGrammar(self, path):
+        with open(path) as f:
+            for line in f.readlines():
+                if line.startswith("EOF"):
+                    break
+                slr.ReadOneLine(line.strip('\n'))
 
     # 设置左结合
     def SetLeftCombs(self, combs):
@@ -382,17 +393,6 @@ if __name__ == '__main__':
         'PrintConflicts': True,
         'TableHead': [],  # ['ci', 'i', '+', '*', '(', ')', '#', 'E'],  # 为空不改
         'LeftCombs': [
-            # ('*', 1),           # 冲突中遇到 * 执行 shift 而不是 r1
-            # ('and', 8, True),
-            # ('or', 8, True),
-            # ('and', 9, False),  # and 优先级高于 or, 不能左结合
-            # ('or', 9, True),
-            # ('and', 10, True),  # not 优先级高于 and
-            # ('or', 10, True),   # not 优先级高于 or
-            # ('+', 16, True),
-            # ('*', 16, False),
-            # ('+', 17, True),
-            # ('*', 17, True),
             (';', 9, True),
             ('and', 13, True),
             ('or', 13, True),
@@ -408,18 +408,8 @@ if __name__ == '__main__':
     }
 
     slr = SLR()
-
-    # 从 txt 中读入文法
-    with open(config['GrammarFile']) as f:
-        for line in f.readlines():
-            if line.startswith("EOF"):
-                break
-            slr.ReadOneLine(line.strip('\n'))
-
-    # 先添加冲突时的左结合规则(依据字符优先级手动配置)
-    slr.SetLeftCombs(config['LeftCombs'])
-
-    slr.Run()       # 构造分析表的主函数
+    slr.Run(config['GrammarFile'], config['LeftCombs']) # 构造分析表的主函数
+    
     slr.LogFamily()
     slr.LogFirstOrFollow()
     slr.LogFirstOrFollow(False)
