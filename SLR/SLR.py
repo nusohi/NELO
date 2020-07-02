@@ -3,7 +3,7 @@
 @Author: nuso
 @LastEditors: nuso
 @Date: 2020-06-29 17:10:02
-@LastEditTime: 2020-07-01 18:37:28
+@LastEditTime: 2020-07-02 16:40:56
 '''
 import queue
 from collections import Iterable
@@ -56,8 +56,9 @@ class NSet():
     def addListener(self, other):
         if other == self:
             return
-        self.listeners.append(other)
-        other.add(self._set)
+        if other not in self.listeners:
+            self.listeners.append(other)
+            other.add(self._set)
 
     def broadcast(self):
         for listener in self.listeners:
@@ -104,7 +105,7 @@ class SLR():
 
     # 从 txt 中读入文法
     def LoadGrammar(self, path):
-        with open(path) as f:
+        with open(path, encoding='utf-8') as f:
             for line in f.readlines():
                 if line.startswith("EOF"):
                     break
@@ -117,7 +118,6 @@ class SLR():
                 self.LeftCombs[comb] = True
             elif len(comb) == 3:    # ('+', 1, False)
                 self.LeftCombs[(comb[0], comb[1])] = comb[2]
-                pass
 
     # 初始化 所有项目
     def InitProjects(self):
@@ -381,14 +381,14 @@ class SLR():
     def LogConflicts(self):
         print('>> Conflicts >>>>>>>>>>>>>>>>>>>>>>>>')
         for conflict in self.conflicts:
-            print(conflict)
+            print(conflict.__str__() + ',')
         print('<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
 
 
 if __name__ == '__main__':
     config = {
-        'GrammarFile': 'SLR/exp.txt',       # 文法需为拓广文法，有起始符(FINAL, S')
-        'OutputFile': 'SLR/SLR_table.txt',
+        'GrammarFile': './SLR/exp.txt',       # 文法需为拓广文法，有起始符(FINAL, S')
+        'OutputFile': './SLR/SLR_table.txt',
         'PrintTable': False,
         'PrintConflicts': True,
         'TableHead': [],  # ['ci', 'i', '+', '*', '(', ')', '#', 'E'],  # 为空不改
@@ -409,7 +409,7 @@ if __name__ == '__main__':
 
     slr = SLR()
     slr.Run(config['GrammarFile'], config['LeftCombs']) # 构造分析表的主函数
-    
+
     slr.LogFamily()
     slr.LogFirstOrFollow()
     slr.LogFirstOrFollow(False)
