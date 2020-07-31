@@ -163,7 +163,7 @@ def __RemindExams__(inc, check_status=True):
 
 def RemindElec(inv):
     while(True):
-        left_elec, msg = ElecQuery.get()
+        left_elec, msg = ElecQuery.Run()
         _nuso_toUserName = UpdateUserName()
         if int(left_elec) < 30:
             itchat.send(msg, toUserName=_nuso_toUserName)

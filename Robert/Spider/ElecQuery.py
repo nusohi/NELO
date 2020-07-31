@@ -1,3 +1,10 @@
+'''
+@Description: 
+@Author: nuso
+@LastEditors: nuso
+@Date: 2019-05-30 13:14:15
+@LastEditTime: 2020-07-31 08:42:20
+'''
 import re
 import json
 import requests
@@ -6,10 +13,10 @@ import requests
 class ElecQuery():
     url = 'http://ecardwx.ujs.edu.cn/wechat/callinterface/queryElecRoomInfo.html'
     data = {
-        'sno': '3170602082',
+        'sno': '3170305000',
         'xxbh': 'synjones',
         'aid': '0030000000005401',
-        'account': '137555',
+        'account': '137333',
         'area': r'{"area": "F区","areaname": ""}',
         'building': r'{"building": "5","buildingid": "5"}',
         'floor': r'{"floor": "","floorid": "5"}',
@@ -17,10 +24,14 @@ class ElecQuery():
     }
 
     @classmethod
-    def get(self):
-        res = requests.post(self.url, data=self.data)
-        return self.clean_data(self, res)
-    
+    def Run(cls):
+        try:
+            res = requests.post(cls.url, data=cls.data)
+            return cls.clean_data(res)
+        except:
+            print("电费查询错误，POST请求失败!")
+            return 0, "电费查询错误，POST请求失败!"
+
     def clean_data(self, res):
         data = json.loads(res.text)
         text = data['errmsg']
@@ -30,5 +41,5 @@ class ElecQuery():
 
 
 if __name__ == '__main__':
-    elec, text = Html.get()
+    elec, text = ElecQuery.Run()
     print(text)

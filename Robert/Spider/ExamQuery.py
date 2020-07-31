@@ -5,8 +5,13 @@ import re
 from bs4 import BeautifulSoup
 import os
 dir_path = os.path.abspath(os.path.dirname(__file__))
+import sys 
+sys.path.append("..") 
+import Conf.conf
 
-cookie = 'TGC=eyJhbGciOiJIUzUxMiJ9.ZXlKNmFYQWlPaUpFUlVZaUxDSmhiR2NpT2lKa2FYSWlMQ0psYm1NaU9pSkJNVEk0UTBKRExVaFRNalUySW4wLi44bGRPcEZ2WEtHNVNLcHZNUlkzREJnLmpld0V5LVdEcFJfX20yaGFqY21ySGxKM1MzM3RUaTlLWjdmV3pxcVNVc3dvVUx3MDB1QWJUdmhkMXBEaFhWOUNUaWVXTUZuUV9YblRuTHJDSmZWM1lqY2RVai0xdWwzcHhWbERhMk54QTVpaUtXUlVzVzZFWkN5dFJ2a09lUHZtQ1FTYUtLSVBVSjhxajA1NTY0MVFZR25Mb1hrWlIwYVVuRXFGMDFURmZhU1AwQzU0WlctaEdjMnFoSlFXYk5ZWXcwOHdsMHhhVFFRTGx1TWVIYjBFWFFPX2NNOEIxaldBNDlZY1B0VlFMZUNsamFtYXBuZENfTTV6dkNMNHp6OXYuSWxuUl9KVWQ3czY4Q0JERjJubDJ3Zw==.o02_BpU2TqOAEGFOgHSyK5ZkXA6eYkfTdLhhFXaVJwkvq8-93na7G_phka7f2J6XKpzusrQxANYX2Dtt4PgobQ; cloud_sessionID=752de73dcbbcd04086318d5a7aa96a63; _csrf-cloud=11bca40db57d83f7638439470c37b38e6ca2b0116781bf5944fb1a32d8f72fc9a%3A2%3A%7Bi%3A0%3Bs%3A11%3A%22_csrf-cloud%22%3Bi%3A1%3Bs%3A32%3A%22Zfo69IMkwIG155hI51IMV4vQEEDWJiO9%22%3B%7D'
+
+conf = Conf.conf.Conf()
+
 
 def parse_cookie(cookie):
     cookies_dict = {}
@@ -20,14 +25,15 @@ class DownloadHtml():
     cookies = parse_cookie(cookie)
 
     @classmethod
-    def get(self):
-        html = requests.get(self.url, cookies=self.cookies)
+    def get(cls):
+        cookies = parse_cookie(conf.get('ExamCookie'))
+        html = requests.get(self.url, cookies=cookies)
         return html.text
 
 
 class ParseExamList():
     @classmethod
-    def get(self, html):
+    def get(cls, html):
         soup = BeautifulSoup(html, 'html.parser')
         _table = soup.find_all('table')
 
@@ -62,11 +68,11 @@ class ParseExamList():
         return exams
 
     @classmethod
-    def clean_old(self, exam_list):
+    def clean_old(cls, exam_list):
         new_exam_list = []
         today = datetime.datetime.now()
 
-        date_pattern = re.compile(r'(\d{4}).(\d{2}).(\d{2})')   # 2019-04-18 2019年06月21
+        date_pattern = re.compile(r'.*(\d{4}).(\d{2}).(\d{2}).*')   # 2019-04-18 2019年06月21
 
         for exam in exam_list:
             match = date_pattern.match(exam['时间'])
@@ -85,7 +91,7 @@ class ParseExamList():
 class ExamReminder():
 
     @classmethod
-    def check(self, clean_old=True):
+    def check(cls, clean_old=True):
         oldList = self.LoadExams(self)
 
         html = DownloadHtml.get()
@@ -116,7 +122,7 @@ class ExamReminder():
             }
 
     @classmethod
-    def format_exam(self, examList):
+    def format_exam(cls, examList):
         text = f'查询到 {len(examList)} 条考试信息：\n'
         text += '------------------------------\n'
         for exam in examList:
