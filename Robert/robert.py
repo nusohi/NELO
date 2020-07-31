@@ -15,8 +15,10 @@ from Spider import weather
 from English import dictionary
 from English import reminder
 from conf import FriendPass, FriendList, friendList, nuso_toUserName, enableCmdQR
+import Conf
 
 
+conf = Conf.conf.Conf()
 
 # 查天气
 wea = weather.Weather()
@@ -43,6 +45,7 @@ def text_reply(msg):
         print("-----------> new friend " + friend['RemarkName'])
         return "Welcome!"
 
+    # 消息处理 - 在 friendList 上的人
     if friend['RemarkName'] in friendList or friend['NickName'] in friendList:
         print("-----------> 来自FriendList")
         # 有'天气'字眼 -> 查天气
@@ -55,6 +58,38 @@ def text_reply(msg):
             translation = dict.GetTranslation(msgText)
             return translation
 
+        # 有'魁'字 -> 控制信息
+        if friend['RemarkName'] == 'nuso' and msgText.startswith('魁'):
+            msgText = msgText.strip('魁').strip()
+
+            keys = msgText.split(' ')
+            confKeywords = ['配置', 'conf']
+            keyIntersection = [i for i in keys if i in confKeywords]
+            if len(keyIntersection) != 0:
+                allConfKeywords = ['all', '啊']
+                keyIntersection = [i for i in keys if i in allConfKeywords]
+                if len(keyIntersection) != 0:
+                    return conf.show(all=True)
+                else:
+                    return conf.show()
+
+            return ControlHandle(msgText)
+
+        # 查询考试信息
+        if msgText.startswith('考试'):
+            response = ExamReminder.check()
+            ExamInfo = ExamReminder.format_exam(response['examList'])
+            if friend['RemarkName'] == 'nuso' :
+                print('主动查询并发送考试信息' + '-' * 30 + f'\n{ExamInfo}')
+                return ExamInfo
+        
+        # 查询电费信息
+        if msgText.startswith('电费'):
+            left_elec, msg = ElecQuery.get()
+            if friend['RemarkName'] == 'nuso' :
+                print('主动查询并发送电费信息' + '-' * 30 + f'\n{msg}')
+                return msg
+
         # 最后没有关键词直接查天气
         cityName = wea.FindCityName(msgText)
         if(cityName):
@@ -64,6 +99,11 @@ def text_reply(msg):
     else:
         print("-----------> 不在friendList的人")
         print('-----------> friend list :', friendList)
+
+
+def SendToNuso(msg):
+    _nuso_toUserName = UpdateUserName()
+    itchat.send(msg, toUserName=_nuso_toUserName)
 
 
 def UpdateUserName():
@@ -138,6 +178,10 @@ def RemindExams(inc, check_status=True):
 
 def __RemindExams__(inc, check_status=True):
     while(True):
+        if not conf.get('AllowRemindExam'):
+            time.sleep(inc)
+            continue
+
         response = ExamReminder.check()
         _nuso_toUserName = UpdateUserName()
 
@@ -172,6 +216,11 @@ def RemindElec(inv):
         print(msg)
         time.sleep(inv)
 
+def ControlHandle(data):
+    kv = data.split('\n')
+    conf.put(kv[0], kv[1])
+    print(f'ControlHandle 添加配置[len={len(kv)}]：{kv[0]} : {kv[1]}')
+    return f'ControlHandle 添加配置[len={len(kv)}]：{kv[0]} : {kv[1]}'
 
 if __name__ == '__main__':
     # itchat 登陆
