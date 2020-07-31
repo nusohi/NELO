@@ -75,7 +75,12 @@ class LocalDictionary():
 
     def Translate(self, word):
         try:
-            return self.words[word]
+            s = ''
+            for pro in self.words[word]['pronunciation'].split(';'):
+                s += f' /{pro.strip()}/ '
+            for mean in self.words[word]['meaning'].split(';'):
+                s += f'\n{mean}'
+            return s
         except:
             return '【LocalDictionary 无此词】'
 

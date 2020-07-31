@@ -3,7 +3,7 @@
 @Author: nuso
 @LastEditors: nuso
 @Date: 2020-07-29 22:27:20
-@LastEditTime: 2020-07-31 10:45:43
+@LastEditTime: 2020-07-31 18:13:53
 '''
 import os
 import sys
@@ -48,7 +48,7 @@ class DayDayWord:
             if self.index >= len(self.pureWords):
                 break
             word = self.pureWords[self.index]
-            text = word + ' '
+            text = f'【{word}】'
             text += self.dictionary.Translate(word)
             self.todayWords.append(text)
             self.index += 1
@@ -62,7 +62,5 @@ class DayDayWord:
 
 if __name__ == '__main__':
     day = DayDayWord()
-    s = day.Get()
-    time.sleep(15)
     s = day.Get()
     print(s)
