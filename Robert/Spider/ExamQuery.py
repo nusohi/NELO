@@ -22,7 +22,6 @@ def parse_cookie(cookie):
 
 class DownloadHtml():
     url = 'http://yun.ujs.edu.cn/jwgl/exam/mobile'
-    cookies = parse_cookie(cookie)
 
     @classmethod
     def get(cls):

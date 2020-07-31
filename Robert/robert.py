@@ -5,6 +5,7 @@ import threading
 import time
 import json
 import re
+import random
 from threading import Timer
 path = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.append(path)
@@ -14,6 +15,7 @@ from Spider.ElecQuery import *
 from Spider import weather
 from English import dictionary
 from English import reminder
+from English import daydaywords
 from conf import FriendPass, FriendList, friendList, nuso_toUserName, enableCmdQR
 import Conf
 
@@ -24,6 +26,8 @@ conf = Conf.conf.Conf()
 wea = weather.Weather()
 # 查单词
 dict = dictionary.Dictionary()
+# 每日单词提醒
+daydayword = daydaywords.DayDayWord()
 
 
 @itchat.msg_register(itchat.content.TEXT, isGroupChat=True, isFriendChat=True)
@@ -207,6 +211,10 @@ def __RemindExams__(inc, check_status=True):
 
 def RemindElec(inv):
     while(True):
+        if not conf.get('AllowRemindElec'):
+            time.sleep(inc)
+            continue
+
         left_elec, msg = ElecQuery.Run()
         _nuso_toUserName = UpdateUserName()
         if int(left_elec) < 30:
@@ -215,6 +223,15 @@ def RemindElec(inv):
         print('-------------电费查询----')
         print(msg)
         time.sleep(inv)
+
+def RemindDayDayWord(min, max):
+    while(True):
+        if 90000 < int(time.strftime("%H%M%S")) < 230000 and conf.get('AllowDailyWord'):
+            words = daydayword.Get(conf.get('DailyWordCount'))
+            _nuso_toUserName = UpdateUserName()
+            itchat.send(words, toUserName=_nuso_toUserName)
+
+        time.sleep(random.randint(min, max))
 
 def ControlHandle(data):
     kv = data.split('\n')
@@ -239,6 +256,8 @@ if __name__ == '__main__':
     threads.append(t3)
     t4 = threading.Thread(target=RemindElec, args=(1*60*60,))
     threads.append(t4)
+    t5 = threading.Thread(target=RemindDayDayWord, args=(45*60, 1*60*60,))
+    threads.append(t5)
 
     for t in threads:
         t.setDaemon(True)

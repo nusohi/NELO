@@ -1,3 +1,11 @@
+'''
+@Description: 
+@Author: nuso
+@LastEditors: nuso
+@Date: 2019-05-27 14:16:19
+@LastEditTime: 2020-07-30 20:16:03
+'''
+
 import os
 import sys
 from platform import system
@@ -16,7 +24,7 @@ nuso_toUserName = '@70454dd54b296a0ae59557f90e5da44e81d52b02bbcf7fc92acaeccb9381
 # Reminder.py
 ToRemindWordListFile = PROJECT_PATH + r'English/io/ToRemindWordListFile.txt'
 AlphabetFile = PROJECT_PATH + r'English/io/alphabet.txt'
-OldWordListFile = PROJECT_PATH+ r'English/io/oldWordList.txt'
+OldWordListFile = PROJECT_PATH + r'English/io/oldWordList.txt'
 
 # dictionary.py
 alphabetPath = PROJECT_PATH + r'English/io/alphabet.txt'
@@ -24,3 +32,8 @@ alphabetPath = PROJECT_PATH + r'English/io/alphabet.txt'
 # weather.py
 CityCodePath = PROJECT_PATH + r'Spider/io/CityCode.json'
 CityNamePath = PROJECT_PATH + r'Spider/io/CityName.json'
+
+# daydaywords.py
+CONF = {
+    'KaoYanWords': PROJECT_PATH + r'English/io/KaoYanWords.txt'
+}

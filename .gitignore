@@ -11,3 +11,6 @@ try/
 Robert/io/
 !Robert/io/CityCode.json
 !Robert/io/CityName.json
+
+Robert/English/io/
+Robert/Spider/io/

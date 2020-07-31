@@ -3,7 +3,7 @@
 @Author: nuso
 @LastEditors: nuso
 @Date: 2020-07-31 08:32:01
-@LastEditTime: 2020-07-31 08:35:44
+@LastEditTime: 2020-07-31 09:11:39
 '''
 import os
 import sys
@@ -16,7 +16,7 @@ import asyncio
 import threading
 import Utils.Single
 
-@util.Single.Singleton
+@Utils.Single.Singleton
 class Conf:
     conf_path = os.path.join(father_path, 'conf.json')
     conf = {}
