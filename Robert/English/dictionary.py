@@ -12,6 +12,7 @@ sys.path.append(os.path.dirname(__file__))
 
 import baidufanyi
 from conf import alphabetPath
+from conf import CONF
 
 
 class Dictionary():
@@ -67,6 +68,16 @@ class Dictionary():
 
         return trans
 
+class LocalDictionary():
+    def __init__(self):
+        with open(CONF['词汇表'], 'r', encoding='utf-8') as f:
+            self.words = json.load(f)
+
+    def Translate(self, word):
+        try:
+            return self.words[word]
+        except:
+            return '【LocalDictionary 无此词】'
 
 if __name__ == '__main__':
     dic = Dictionary()

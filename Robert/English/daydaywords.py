@@ -3,14 +3,14 @@
 @Author: nuso
 @LastEditors: nuso
 @Date: 2020-07-29 22:27:20
-@LastEditTime: 2020-07-31 08:58:45
+@LastEditTime: 2020-07-31 10:45:43
 '''
 import os
 import sys
 path = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.append(path)
 from conf import CONF
-from dictionary import Dictionary
+from dictionary import LocalDictionary
 import time
 import threading
 import random
@@ -19,8 +19,8 @@ class DayDayWord:
     def __init__(self):
         self.todayWords = []
         self.pureWords = []
-        self.dictionary = Dictionary()
-        self.prepareCount = 10     # 一次准备 50 个
+        self.dictionary = LocalDictionary()
+        self.prepareCount = 100     # 一次准备 100 个
         self.sunrise = 9
         self.sunset = 23
         self.index = 0
@@ -49,11 +49,7 @@ class DayDayWord:
                 break
             word = self.pureWords[self.index]
             text = word + ' '
-            try:
-                time.sleep(0.8)
-                text += self.dictionary.JustGetTranslation(word)
-            except:
-                text += '【查词出错】'
+            text += self.dictionary.Translate(word)
             self.todayWords.append(text)
             self.index += 1
 

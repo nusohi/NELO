@@ -3,7 +3,7 @@
 @Author: nuso
 @LastEditors: nuso
 @Date: 2019-05-27 14:16:19
-@LastEditTime: 2020-07-30 20:16:03
+@LastEditTime: 2020-07-31 10:44:40
 '''
 
 import os
@@ -35,5 +35,6 @@ CityNamePath = PROJECT_PATH + r'Spider/io/CityName.json'
 
 # daydaywords.py
 CONF = {
-    'KaoYanWords': PROJECT_PATH + r'English/io/KaoYanWords.txt'
+    'KaoYanWords': PROJECT_PATH + r'English/io/KaoYanWords.txt',
+    '词汇表': PROJECT_PATH + r'English/io/词汇表.json',
 }
